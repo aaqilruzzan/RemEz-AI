@@ -109,7 +109,6 @@ def main():
 
                 vectorstore = get_vectorstore(text_chunks)
 
-                # create conversation chain
                 st.session_state.conversation = get_conversation_chain(vectorstore)
                 st.success("Documents RAG Process done!")
 
