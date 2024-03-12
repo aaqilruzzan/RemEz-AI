@@ -66,13 +66,15 @@ class EmbeddingsStore:
         return embedding
 
 # Initialize embeddings with the specified deployment
-embeddings = OpenAIEmbeddings(deployment="text-embedding-ada-002")
-#embeddings = HuggingFaceEmbeddings()
+#embeddings = OpenAIEmbeddings(deployment="text-embedding-ada-002")
+embeddings = HuggingFaceEmbeddings()
 embeddings_store = EmbeddingsStore(embeddings)
 
 # Example using
 text1 = "RAG, or Retrieval-Augmented Generation, is an innovative natural language processing technique that combines the retrieval of relevant documents from a large dataset with a generative model. This approach enhances the model's ability to generate more accurate and contextually relevant answers by referencing specific information found in the retrieved documents."
 text2 = "RAG, or Rapid Aggressive Growth, is a gardening technique focused on accelerating plant development through intensive chemical fertilizers and environmental manipulation. It aims to maximize yield in minimal time, often used in industrial farming to boost production rates and enhance crop robustness against environmental stresses."
 
-similarity_percentage = calculate_embedded_text_similarity_percentage(text1, text2, embeddings)
-print("Similarity between the texts:", similarity_percentage, "%")
+def calculate_similarity(text1,text2):
+    similarity_percentage = calculate_embedded_text_similarity_percentage(text1, text2, embeddings)
+    print("Similarity between the texts:", similarity_percentage, "%")
+    return similarity_percentage
