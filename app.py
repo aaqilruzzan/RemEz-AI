@@ -4,7 +4,6 @@ from rag import main as rag_main
 from similarity import calculate_similarity
 from flask_cors import CORS
 
-
 app = Flask(__name__)
 CORS(app)
 def get_pdf_text(pdf_file):
@@ -46,5 +45,5 @@ def similarity():
     # Return the similarity score to the frontend
     return jsonify({'similarityScore': similarity_score})
 
-# if __name__ == '__main__':
-#     app.run(debug=True)
+if __name__ == '__main__':
+ app.run(debug=True)
