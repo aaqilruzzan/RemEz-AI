@@ -1,1 +1,16 @@
-This is the space to create the AI part of RemEz project
+{
+  "question": "Generate 3 questions of 2 lines each and generate the corresponding answers to those question. End each question with a question mark",
+  "chat_history": [
+    {
+      "content": "Generate 3 questions of 2 lines each and generate the corresponding answers to those question. End each question with a question mark",
+      "additional_kwargs": {},
+      "example": false
+    },
+    {
+      "content": "1. What is the historical significance of Sri Lanka in relation to the Portuguese, Dutch, and British empires?\n   - Throughout history, Sri Lanka was successively controlled by the Portuguese, Dutch, and British empires due to its strategic location and importance in maritime trade.\n\n2. How has the recent economic crisis impacted Sri Lanka's development and political landscape?\n   - The ongoing economic crisis in Sri Lanka has led to the collapse of its currency, rising inflation, humanitarian crisis, and street protests demanding the government's resignation.\n\n3. Who played a significant role in Sri Lanka's documented history, and what led to the end of the 26-year civil war?\n   - The Sinhalese, Sri Lankan Tamils, and Liberation Tigers of Tamil Eelam were key players in Sri Lanka's history, with the civil war ending in 2009 when the Sri Lanka Armed Forces defeated the LTTE.",
+      "additional_kwargs": {},
+      "example": false
+    }
+  ],
+  "answer": "1. What is the historical significance of Sri Lanka in relation to the Portuguese, Dutch, and British empires?\n   - Throughout history, Sri Lanka was successively controlled by the Portuguese, Dutch, and British empires due to its strategic location and importance in maritime trade.\n\n2. How has the recent economic crisis impacted Sri Lanka's development and political landscape?\n   - The ongoing economic crisis in Sri Lanka has led to the collapse of its currency, rising inflation, humanitarian crisis, and street protests demanding the government's resignation.\n\n3. Who played a significant role in Sri Lanka's documented history, and what led to the end of the 26-year civil war?\n   - The Sinhalese, Sri Lankan Tamils, and Liberation Tigers of Tamil Eelam were key players in Sri Lanka's history, with the civil war ending in 2009 when the Sri Lanka Armed Forces defeated the LTTE."
+}

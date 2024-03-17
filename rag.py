@@ -1,26 +1,13 @@
-import streamlit as st  
 from dotenv import load_dotenv  
-from PyPDF2 import PdfReader    
 from langchain.text_splitter import CharacterTextSplitter
 from transformers import AutoTokenizer, AutoModel
-from langchain.embeddings import OpenAIEmbeddings, HuggingFaceInstructEmbeddings
+from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.chat_models import ChatOpenAI
 import faiss
 import torch
-from langchain.llms import HuggingFaceHub
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
-from htmlTemplates import css, bot_template, user_template
-
-def get_pdf_text(pdf_docs):
-    text = ""   
-    for pdf in pdf_docs:
-        pdf_reader = PdfReader(pdf) 
-        for page in pdf_reader.pages:
-            if page.extract_text() is not None:
-                text += page.extract_text()
-    return text
 
 def get_text_chunks(text):
     text_splitter = CharacterTextSplitter(  
@@ -34,7 +21,6 @@ def get_text_chunks(text):
 
 def get_vectorstore(text_chunks):
     embeddings = OpenAIEmbeddings()
-    # embeddings = HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-xl")
     vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
     return vectorstore
 
@@ -60,8 +46,6 @@ def create_faiss_index(embeddings):
 
 def get_conversation_chain(vectorstore):
     llm = ChatOpenAI()
-    # llm = HuggingFaceHub(repo_id="google/flan-t5-xxl", model_kwargs={"temperature":0.5, "max_length":512})
-
     memory = ConversationBufferMemory(
         memory_key='chat_history', return_messages=True)
     conversation_chain = ConversationalRetrievalChain.from_llm(
@@ -71,46 +55,55 @@ def get_conversation_chain(vectorstore):
     )
     return conversation_chain
 
-def handle_userinput(user_question):
-    response = st.session_state.conversation({'question': user_question})
-    st.session_state.chat_history = response['chat_history']
+def generate_questions_answers(raw_text):
+    text_chunks = get_text_chunks(raw_text)
+    vectorstore = get_vectorstore(text_chunks)
+    conversation = get_conversation_chain(vectorstore)
 
-    for i, message in enumerate(st.session_state.chat_history):
-        if i % 2 == 0:
-            st.write(user_template.replace(
-                "$MSG", message.content), unsafe_allow_html=True)
-        else:
-            st.write(bot_template.replace(
-                "$MSG", message.content), unsafe_allow_html=True)
-
-def main():
-    load_dotenv()
-    st.set_page_config(page_title="PDF Q&A")
-    st.write(css, unsafe_allow_html=True)
-
-    if "conversation" not in st.session_state:
-        st.session_state.conversation = None    
-    if "chat_history" not in st.session_state:
-        st.session_state.chat_history = None
-    st.header("PDF Question Generator")
-    user_question = st.text_input("Ask a question about your documents:") 
-    if user_question:
-        handle_userinput(user_question) 
-
-    with st.sidebar:
-        st.subheader("Your Documents")
-        pdf_docs = st.file_uploader("Upload your PDFs here and click on process", accept_multiple_files=True)
-        if st.button("Process"):
-            with st.spinner("Processing"):  
+    generated_questions = {}
+    generated_answers = {}
     
-                raw_text = get_pdf_text(pdf_docs)
-                
-                text_chunks = get_text_chunks(raw_text)
+    # for i in range(1, 4):  # Generate 3 descriptive questions and answers
+    user_question = f"Generate 3 questions of 2 lines each and generate the corresponding answers to those question. End each question with a question mark. Add 2 line breaks after each question-answer pair. Don't add any line breaks anywhere else. Don't put numbers for questions"
+    response = conversation({'question': user_question})
+    print(response)
+    
+    ai_text = response['answer']
+    
+    lines = ai_text.split('\n\n')  # Splits the text into lines
+    
+    generated_questions = {}
+    generated_answers = {}
+    question_number = 1  # To keep track of question numbers
+    
+    for line in lines:
+        
+            # Splitting by the first occurrence of "-" to separate question and answer
+        parts = line.split("?", 1)
+        question = parts[0].strip()
+        answer = parts[1].strip() if len(parts) > 1 else ""
+        
+        generated_questions[question_number] = question
+        generated_answers[question_number] = answer
+        question_number += 1
+    
+    return generated_questions, generated_answers
 
-                vectorstore = get_vectorstore(text_chunks)
+def main(raw_text):
+    load_dotenv()
 
-                st.session_state.conversation = get_conversation_chain(vectorstore)
-                st.success("Documents RAG Process done!")
+    generated_questions, generated_answers = generate_questions_answers(raw_text)
+    
+    return generated_questions, generated_answers
 
-if __name__ == '__main__':
-    main()
+if __name__== '__main__':
+    # Pass the raw text input directly to the main function
+    raw_text = "Replace this with your raw text input"
+    generated_questions, generated_answers = main(raw_text)
+    
+    # Display the generated questions and answers
+    for i in range(1, 4):
+        print(f"Question {i}:")
+        print(generated_questions[i])
+        print(f"Answer {i}:")
+        print(generated_answers[i])
