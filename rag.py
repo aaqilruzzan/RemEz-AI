@@ -55,7 +55,7 @@ def get_conversation_chain(vectorstore):
     )
     return conversation_chain
 
-def generate_questions_answers(raw_text):
+def generate_questions_answers(raw_text,questionNo):
     text_chunks = get_text_chunks(raw_text)
     vectorstore = get_vectorstore(text_chunks)
     conversation = get_conversation_chain(vectorstore)
@@ -64,7 +64,7 @@ def generate_questions_answers(raw_text):
     generated_answers = {}
     
     # for i in range(1, 4):  # Generate 3 descriptive questions and answers
-    user_question = f"Generate 3 questions of 2 lines each and generate the corresponding answers to those question. End each question with a question mark. Add 2 line breaks after each question-answer pair. Don't add any line breaks anywhere else. Don't put numbers for questions"
+    user_question = f"Generate {questionNo} questions of 2 lines each and generate the corresponding answers to those question dont make them short answers. End each question with a question mark. Add 2 line breaks after each question-answer pair. Don't add any line breaks anywhere else. Don't put numbers for questions"
     response = conversation({'question': user_question})
     print(response)
     
@@ -89,10 +89,10 @@ def generate_questions_answers(raw_text):
     
     return generated_questions, generated_answers
 
-def main(raw_text):
+def main(raw_text,questionNo):
     load_dotenv()
-
-    generated_questions, generated_answers = generate_questions_answers(raw_text)
+    
+    generated_questions, generated_answers = generate_questions_answers(raw_text,questionNo)
     
     return generated_questions, generated_answers
 

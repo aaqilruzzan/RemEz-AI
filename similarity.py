@@ -68,7 +68,7 @@ class EmbeddingsStore:
         return embedding
 
 # Initialize embeddings with the specified deployment
-#embeddings = OpenAIEmbeddings(deployment="text-embedding-ada-002")
+# embeddings = OpenAIEmbeddings(deployment="text-embedding-ada-002")
 embeddings = HuggingFaceEmbeddings()
 embeddings_store = EmbeddingsStore(embeddings)
 

@@ -27,8 +27,9 @@ def upload_file():
 
         if file:
             raw_text = get_pdf_text(file)
+            questionNo = request.form.get('questionNo')
             # Call the main function from rag.py with the raw text as parameter
-            questions, answers = rag_main(raw_text)
+            questions, answers = rag_main(raw_text,questionNo)
             return jsonify({'questions': questions, 'answers': answers}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
