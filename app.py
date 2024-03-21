@@ -36,15 +36,20 @@ def upload_file():
     
 @app.route('/calculatesimilarity', methods=['POST'])
 def similarity():
-    data = request.get_json()
-    user_answer = data['userAnswer']
-    model_answer = data['modelAnswer']
+    try:
+        data = request.get_json()
+        if 'userAnswer' not in data or 'modelAnswer' not in data:
+            return jsonify({'error': 'Missing userAnswer or modelAnswer in request'}), 400
+        user_answer = data['userAnswer']
+        model_answer = data['modelAnswer']
 
-    # Calculate similarity
-    similarity_score = calculate_similarity(user_answer, model_answer)
+        # Calculate similarity
+        similarity_score = calculate_similarity(user_answer, model_answer)
 
-    # Return the similarity score to the frontend
-    return jsonify({'similarityScore': similarity_score})
+        # Return the similarity score to the frontend
+        return jsonify({'similarityScore': similarity_score})
+    except Exception as e:
+        return jsonify({'error': 'Failed to calculate similarity', 'details': str(e)}), 500
 
 if __name__ == '__main__':
  app.run(debug=True)

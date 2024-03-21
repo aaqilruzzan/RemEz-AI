@@ -63,8 +63,7 @@ def generate_questions_answers(raw_text,questionNo):
     generated_questions = {}
     generated_answers = {}
     
-    # for i in range(1, 4):  # Generate 3 descriptive questions and answers
-    user_question = f"Generate {questionNo} questions of 2 lines each and generate the corresponding answers to those question dont make them short answers. End each question with a question mark. Add 2 line breaks after each question-answer pair. Don't add any line breaks anywhere else. Don't put numbers for questions"
+    user_question = f"Generate {questionNo} questions of 2 lines each and generate the corresponding answers to those question dont make them short answers. End each question with a question mark. Add two line breaks after each question-answer pair. Don't add two line breaks anywhere else. Don't put numbers for questions"
     response = conversation({'question': user_question})
     print(response)
     
@@ -78,7 +77,6 @@ def generate_questions_answers(raw_text,questionNo):
     
     for line in lines:
         
-            # Splitting by the first occurrence of "-" to separate question and answer
         parts = line.split("?", 1)
         question = parts[0].strip()
         answer = parts[1].strip() if len(parts) > 1 else ""
