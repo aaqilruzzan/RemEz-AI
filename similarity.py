@@ -5,8 +5,11 @@ from transformers import AutoTokenizer, AutoModel
 import torch
 from dotenv import load_dotenv
 import os
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+from nltk.corpus import wordnet as wn
+from nltk import word_tokenize, pos_tag
+from nltk.stem import WordNetLemmatizer
+from collections import defaultdict
+
 
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -72,22 +75,57 @@ class EmbeddingsStore:
 embeddings = HuggingFaceEmbeddings()
 embeddings_store = EmbeddingsStore(embeddings)
 
-# Example using
-text1 = "RAG, or Retrieval-Augmented Generation, is an innovative natural language processing technique that combines the retrieval of relevant documents from a large dataset with a generative model. This approach enhances the model's ability to generate more accurate and contextually relevant answers by referencing specific information found in the retrieved documents."
-text2 = "RAG, or Rapid Aggressive Growth, is a gardening technique focused on accelerating plant development through intensive chemical fertilizers and environmental manipulation. It aims to maximize yield in minimal time, often used in industrial farming to boost production rates and enhance crop robustness against environmental stresses."
+def get_wordnet_pos(treebank_tag):
+    """Converts treebank tags to WordNet tags."""
+    if treebank_tag.startswith('J'):
+        return wn.ADJ
+    elif treebank_tag.startswith('V'):
+        return wn.VERB
+    elif treebank_tag.startswith('N'):
+        return wn.NOUN
+    elif treebank_tag.startswith('R'):
+        return wn.ADV
+    else:
+        return wn.NOUN
 
-# def calculate_similarity(text1,text2):
-#     similarity_percentage = calculate_embedded_text_similarity_percentage(text1, text2, embeddings)
-#     rounded_similarity_percentage = round(similarity_percentage, 2)
-#     print(f"Similarity: {rounded_similarity_percentage:.2f}%")
-#     return rounded_similarity_percentage
+def synonym_sets(word, pos):
+    """Finds synonyms for a word with a given part-of-speech tag."""
+    lemmatizer = WordNetLemmatizer()
+    lemmatized_word = lemmatizer.lemmatize(word, pos=pos)
+    synsets = wn.synsets(lemmatized_word, pos=pos)
+    synonyms = set()
+    for synset in synsets:
+        for lemma in synset.lemmas():
+            synonyms.add(lemma.name())
+    return synonyms
 
-def calculate_similarity(text1,text2):
-    vectorizer = TfidfVectorizer()
-    combined_texts = [text1, text2]
-    tfidf_matrix = vectorizer.fit_transform(combined_texts)
-    cos_sim = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
-    similarity_percentage = cos_sim * 100
-    rounded_similarity_percentage = round(similarity_percentage, 2)
-    print(f"Similarity: {rounded_similarity_percentage:.2f}%")
-    return rounded_similarity_percentage
+def calculate_similarity(text1, text2):
+    """Compares two texts for similarity, considering synonyms."""
+    tokens1 = word_tokenize(text1)
+    tokens2 = word_tokenize(text2)
+    
+    pos_tags1 = pos_tag(tokens1)
+    pos_tags2 = pos_tag(tokens2)
+    
+    words1 = {word: get_wordnet_pos(pos) for word, pos in pos_tags1}
+    words2 = {word: get_wordnet_pos(pos) for word, pos in pos_tags2}
+    
+    match_count = 0
+    total_count = max(len(words1), len(words2))
+    
+    for word1, pos1 in words1.items():
+        synonyms1 = synonym_sets(word1, pos1)
+        for word2, pos2 in words2.items():
+            if word1 == word2 or word2 in synonyms1:
+                match_count += 1
+                break
+    
+    similarity = (match_count / total_count) * 100
+    return similarity
+
+system_answer = "Sri Lanka has a documented history dating back 3,000 years, with evidence of prehistoric human settlements and a 26-year civil war that ended in 2009."
+user_answer = "The Sinhala and Tamil New Year stands as a significant cultural event in Sri Lanka, signifying the conclusion of the harvesting period."
+
+similarity_score = calculate_similarity(system_answer, user_answer)
+
+print(f"Similarity: {similarity_score:.2f}%")
