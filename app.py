@@ -52,4 +52,4 @@ def similarity():
         return jsonify({'error': 'Failed to calculate similarity', 'details': str(e)}), 500
 
 if __name__ == '__main__':
- app.run(debug=True)
+    app.run(debug=True) 
