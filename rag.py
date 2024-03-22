@@ -7,7 +7,7 @@ from langchain.embeddings import OpenAIEmbeddings, HuggingFaceInstructEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.chat_models import ChatOpenAI
 import faiss
-import torch
+# import torch
 from langchain.llms import HuggingFaceHub
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
@@ -38,18 +38,18 @@ def get_vectorstore(text_chunks):
     vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
     return vectorstore
 
-def get_embeddings(text_chunks):
-    model_name = "distilbert-base-uncased"
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModel.from_pretrained(model_name)
+# def get_embeddings(text_chunks):
+#     model_name = "distilbert-base-uncased"
+#     tokenizer = AutoTokenizer.from_pretrained(model_name)
+#     model = AutoModel.from_pretrained(model_name)
 
-    def get_embedding(text):
-        inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True, max_length=512)
-        with torch.no_grad():
-            outputs = model(**inputs)
-        return outputs.last_hidden_state.mean(dim=1).cpu().numpy()
-    embeddings = [get_embedding(chunk) for chunk in text_chunks]
-    return embeddings
+#     def get_embedding(text):
+#         inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True, max_length=512)
+#         with torch.no_grad():
+#             outputs = model(**inputs)
+#         return outputs.last_hidden_state.mean(dim=1).cpu().numpy()
+#     embeddings = [get_embedding(chunk) for chunk in text_chunks]
+#     return embeddings
 
 def create_faiss_index(embeddings):
     dimension = embeddings[0].shape[1]
