@@ -96,11 +96,11 @@ def main(raw_text,questionNo):
     return generated_questions, generated_answers
 
 if __name__== '__main__':
-    # Pass the raw text input directly to the main function
+    # Passing the raw text input directly to the main function
     raw_text = "Replace this with your raw text input"
     generated_questions, generated_answers = main(raw_text)
     
-    # Display the generated questions and answers
+    # Displaying the generated questions and answers
     for i in range(1, 4):
         print(f"Question {i}:")
         print(generated_questions[i])
