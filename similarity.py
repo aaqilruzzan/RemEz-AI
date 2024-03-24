@@ -26,11 +26,11 @@ def calculate_embedded_text_similarity_percentage(text1, text2, embeddings):
         b = embeddings_store.get_embedding(text2)
         if b is None:
             b = embeddings_store.compute_and_store_embedding(text2)
-        # Calculate cosine similarity between the two embeddings
+        # Calculating cosine similarity between the two embeddings
         cosine_similarity = np.dot(a, b) / (norm(a) * norm(b))
-        # Normalize the similarity score to a 0-1 range and then to percentage
+        # Normalizing the similarity score to a 0-1 range and then to percentage
         similarity_percentage = (cosine_similarity + 1) / 2
-        # Adjust the similarity score for more intuitive understanding
+        # Adjusting the similarity score for more intuitive understanding
         adjusted_similarity_percentage = adjust_similarity_score(similarity_percentage)
         return adjusted_similarity_percentage
     
