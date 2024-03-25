@@ -2,7 +2,7 @@ RemEz: AI-Powered Question and Answer System The project, RemEz, aims to address
 
 Deployed Project Website https://rem-ez.vercel.app/
 
-AI Repository https://github.com/aaqilruzzan/RemEz-AI
+Frontend and Backend Repository https://github.com/aaqilruzzan/RemEz
 
 Current Features - PDF Upload and Generation: Users can upload PDFs to generate descriptive Q&A based on the content, facilitating an interactive learning process.
 
